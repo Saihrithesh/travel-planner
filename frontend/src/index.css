@@ -1,0 +1,6 @@
+@import "tailwindcss";
+.card-wrapper:has(.trip-card:hover) .trip-card:not(:hover){
+    filter: blur(2px);
+    opacity: 0.8;
+    transform: scale(0.98);
+}
