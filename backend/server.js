@@ -15,7 +15,9 @@ const app = express();
 
 // ✅ MIDDLEWARES
 app.use(cors());
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable for easier local development
+}));
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -46,7 +48,7 @@ app.use((req, res, next) => {
 // Global error handler
 app.use(globalErrorHandler);
 
-// ✅ IMPORTANT: DB CONNECTION (MUST be Atlas URL)
+// ✅ DB CONNECTION
 const DB = process.env.MONGODB_URL;
 
 if (!DB) {
@@ -54,18 +56,25 @@ if (!DB) {
   process.exit(1);
 }
 
-// ✅ Connect DB FIRST, then start server
+// ✅ Start listening IMMEDIATELY for responsiveness, DB connects in background
+const PORT = process.env.PORT || 5000;
+const server = app.listen(PORT, () => {
+    console.log(`🚀 App running on port ${PORT}`);
+});
+
 mongoose.connect(DB)
   .then(() => {
     console.log('✅ DB connection successful!');
-
-    const PORT = process.env.PORT || 5000;
-
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 App running on port ${PORT}`);
-    });
   })
   .catch(err => {
     console.error('❌ DB connection failed:', err.message);
-    process.exit(1);
+    // Do not kill the server, allow it to retry or sit in failed state for dev debugging
   });
+
+process.on('unhandledRejection', err => {
+    console.log('UNHANDLED REJECTION! 💥 Shutting down...');
+    console.log(err.name, err.message);
+    server.close(() => {
+        process.exit(1);
+    });
+});
