@@ -12,7 +12,6 @@ const signToken = id => {
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
 
-  
   user.password = undefined;
 
   res.status(statusCode).json({
@@ -29,7 +28,7 @@ export const signup = catchAsync(async (req, res, next) => {
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
-    role: req.body.role 
+    role: req.body.role
   });
 
   createSendToken(newUser, 201, res);
@@ -38,17 +37,16 @@ export const signup = catchAsync(async (req, res, next) => {
 export const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
-
   if (!email || !password) {
-    return next(new AppError('Please provide email and password!', 400));  }
+    return next(new AppError('Please provide email and password!', 400));
+  }
 
-  
   const user = await User.findOne({ email }).select('+password');
 
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Incorrect email or password', 401));
   }
 
-  
   createSendToken(user, 200, res);
 });
+

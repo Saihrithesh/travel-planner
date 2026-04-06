@@ -9,7 +9,6 @@ export const setTripId = (req, res, next) => {
 };
 
 export const verifyTripAccess = catchAsync(async (req, res, next) => {
-   
   const trip = await Trip.findById(req.body.trip || req.params.tripId);
   if (!trip) {
     return next(new AppError('Trip not found', 404));
@@ -76,3 +75,4 @@ export const deleteItinerary = catchAsync(async (req, res, next) => {
     data: null
   });
 });
+

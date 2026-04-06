@@ -19,7 +19,7 @@ const tripSchema = new mongoose.Schema(
           required: [true, 'Destination name is required']
         },
         location: {
-          type: String // We can store lat/lng or formatted address
+          type: String
         }
       }
     ],
@@ -41,7 +41,7 @@ const tripSchema = new mongoose.Schema(
       default: ['relaxation']
     },
     image: {
-      type: String, // Store image URL/Filename
+      type: String,
       default: 'default-trip.jpg'
     }
   },
@@ -52,7 +52,6 @@ const tripSchema = new mongoose.Schema(
   }
 );
 
-// Virtual populate for itineraries
 tripSchema.virtual('itineraries', {
   ref: 'Itinerary',
   foreignField: 'trip',
@@ -61,3 +60,4 @@ tripSchema.virtual('itineraries', {
 
 const Trip = mongoose.model('Trip', tripSchema);
 export default Trip;
+
