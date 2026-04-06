@@ -76,6 +76,7 @@ function LoginPage() {
             <label htmlFor="password" className="text-left m-2 font-bold mt-1">
               Password
             </label>
+
             <input
               type="password"
               id="password"
@@ -94,13 +95,14 @@ function LoginPage() {
               >
                 {loading ? "Signing in..." : "Sign In"}
               </button>
-              <p>
+              <p className="text-center">
                 Don't have an account?{" "}
                 <Link to="/signup" className="font-bold underline">
                   Sign Up
                 </Link>
               </p>
             </div>
+
           </form>
         </div>
       </div>

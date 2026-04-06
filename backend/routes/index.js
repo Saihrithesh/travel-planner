@@ -11,15 +11,15 @@ import { signupSchema, loginSchema } from '../utils/validators.js';
 
 const router = express.Router();
 
+// 1. Handled by Routers
 router.use('/auth', authRouter);
 router.use('/users', userRouter);
 router.use('/trips', tripRouter);
 router.use('/destinations', destinationRouter);
 
-
+// 2. Direct Routes
 router.get('/weather', protect, getWeather);
 router.post('/ai-planner', protect, getAIItinerary);
-
 
 router.post('/login', validate(loginSchema), login);
 router.post('/signup', validate(signupSchema), signup);
