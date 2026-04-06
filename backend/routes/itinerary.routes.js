@@ -11,11 +11,11 @@ import { protect } from '../middlewares/auth.middleware.js';
 import { validate } from '../middlewares/validate.middleware.js';
 import { itinerarySchema } from '../utils/validators.js';
 
-// mergeParams allows access to tripId from other routers
+
 const router = express.Router({ mergeParams: true });
 
 router.use(protect);
-router.use(verifyTripAccess); // Ensures user has access to trip
+router.use(verifyTripAccess); 
 
 router
   .route('/')

@@ -21,7 +21,7 @@ api.interceptors.request.use(
   }
 );
 
-// Intercept response to globally catch token expirations
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {

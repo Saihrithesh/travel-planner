@@ -9,7 +9,6 @@ const router = express.Router();
 
 router.use(protect);
 
-// External APIs
 router.get('/weather', getWeather);
 router.post('/ai-planner', getAIItinerary);
 

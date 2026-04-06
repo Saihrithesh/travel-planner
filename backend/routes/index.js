@@ -16,11 +16,11 @@ router.use('/users', userRouter);
 router.use('/trips', tripRouter);
 router.use('/destinations', destinationRouter);
 
-// Add top-level routes for weather and ai-planner as used by frontend
+
 router.get('/weather', protect, getWeather);
 router.post('/ai-planner', protect, getAIItinerary);
 
-// Add top-level auth routes to prevent 404s from direct /login or /signup calls
+
 router.post('/login', validate(loginSchema), login);
 router.post('/signup', validate(signupSchema), signup);
 
