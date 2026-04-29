@@ -17,7 +17,7 @@ function LoginPage() {
     try {
       const response = await api.post("/auth/login", { email, password });
       
-      // Store token and user details on successful login
+      
       const token = response.data.token;
       const user = response.data.data.user;
       

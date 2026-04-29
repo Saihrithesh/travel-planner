@@ -25,7 +25,10 @@ const tripSchema = new mongoose.Schema(
     ],
     startDate: {
       type: Date,
-      required: [true, 'A trip must have a start date']
+      required: [true, 'A trip must have a start date'],
+      default:Date.now(),
+      validate:Date.now()>Date.now(),
+      
     },
     endDate: {
       type: Date,

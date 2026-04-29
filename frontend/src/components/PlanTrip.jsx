@@ -6,12 +6,21 @@ function PlanTrip() {
   const navigate = useNavigate();
   const location = useLocation();
   const prefill = location.state || {};
+  const isEditing = Boolean(prefill.trip);
+  const tripId = isEditing ? prefill.trip._id : null;
 
   const [savedStatus, setSavedStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const [destination, setDestination] = useState(prefill.destination || "");
+  const [destination, setDestination] = useState(
+    isEditing ? (prefill.trip.destinations?.[0]?.name || prefill.trip.title?.replace('Trip to ', '')) : prefill.destination || ""
+  );
+
+  const formatToDateStr = (dateString) => {
+    if (!dateString) return "";
+    return new Date(dateString).toISOString().split("T")[0];
+  };
 
   const getLocalDateString = (addDays = 0) => {
     const d = new Date();
@@ -19,9 +28,13 @@ function PlanTrip() {
     return d.toISOString().split("T")[0];
   };
 
-  const [startDate, setStartDate] = useState(prefill.durationDays ? getLocalDateString(0) : "");
-  const [endDate, setEndDate] = useState(prefill.durationDays ? getLocalDateString(prefill.durationDays) : "");
-  const [budget, setBudget] = useState(prefill.budget || 0);
+  const [startDate, setStartDate] = useState(
+    isEditing ? formatToDateStr(prefill.trip.startDate) : (prefill.durationDays ? getLocalDateString(0) : "")
+  );
+  const [endDate, setEndDate] = useState(
+    isEditing ? formatToDateStr(prefill.trip.endDate) : (prefill.durationDays ? getLocalDateString(prefill.durationDays) : "")
+  );
+  const [budget, setBudget] = useState(isEditing ? prefill.trip.budget : (prefill.budget || 0));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,9 +51,13 @@ function PlanTrip() {
         destinations: [{ name: destination }]
       };
 
-      await api.post("/trips", newTripData);
-
-      setSavedStatus("Trip is saved!😎");
+      if (isEditing) {
+        await api.patch(`/trips/${tripId}`, newTripData);
+        setSavedStatus("Trip updated!😎");
+      } else {
+        await api.post("/trips", newTripData);
+        setSavedStatus("Trip is saved!😎");
+      }
       setTimeout(() => {
         navigate("/mytrips"); // Just navigate, MyTrips will fetch from DB now
       }, 1000);
@@ -59,9 +76,9 @@ function PlanTrip() {
   return (
     <div className="flex flex-col items-center mb-10">
       <div className="text-center">
-        <h1 className="font-bold text-4xl pt-6">Plan Your Trip</h1>
+        <h1 className="font-bold text-4xl pt-6">{isEditing ? "Edit Your Trip" : "Plan Your Trip"}</h1>
         <p className="text-xl pt-2">
-          Fill in the details below to create your perfect travel plan
+          {isEditing ? "Update your travel details below" : "Fill in the details below to create your perfect travel plan"}
         </p>
       </div>
       <div className="text-left">
@@ -154,7 +171,7 @@ function PlanTrip() {
               type="submit"
               className="border-2 bg-black text-white rounded-md h-[40px] w-[150px] font-bold disabled:bg-gray-400"
             >
-              {loading ? "Saving..." : "Save Trip Plan"}
+              {loading ? "Saving..." : (isEditing ? "Update Trip" : "Save Trip Plan")}
             </button>
           </div>
           

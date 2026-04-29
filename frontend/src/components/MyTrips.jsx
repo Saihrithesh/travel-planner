@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CirclePlus, CircleX, Calendar, Trash2, SquarePen, MapPin } from "lucide-react";
 import api from "../api";
 
 const MyTrips = () => {
   const [myTrips, setMyTrips] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Fetch all trips on load
   const fetchTrips = async () => {
@@ -126,7 +127,10 @@ const MyTrips = () => {
 
               <div className="pt-2">
                 <div className="flex justify-center gap-3 mb-4">
-                  <button className="border-2 flex flex-1 items-center justify-center gap-2 px-2 py-2 rounded-xl font-bold hover:bg-blue-600 hover:text-white transition">
+                  <button 
+                    onClick={() => navigate(`/edittrip/${each._id}`, { state: { trip: each } })}
+                    className="border-2 flex flex-1 items-center justify-center gap-2 px-2 py-2 rounded-xl font-bold hover:bg-blue-600 hover:text-white transition"
+                  >
                     <SquarePen className="h-4 w-4" /> Edit
                   </button>
                   <button 

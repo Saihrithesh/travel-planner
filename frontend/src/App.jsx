@@ -66,6 +66,14 @@ function App() {
           } 
         />
         <Route 
+          path="/edittrip/:id" 
+          element={
+            <ProtectedRoute>
+              <PlanTrip />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
           path="/mytrips" 
           element={
             <ProtectedRoute>

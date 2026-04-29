@@ -29,7 +29,7 @@ const itinerarySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Prevent duplicate days
+
 itinerarySchema.index({ trip: 1, dayNumber: 1 }, { unique: true });
 
 const Itinerary = mongoose.model('Itinerary', itinerarySchema);
