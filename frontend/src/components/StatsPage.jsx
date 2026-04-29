@@ -38,13 +38,13 @@ function StatsPage() {
     { name: "Dec", trips: 0 },
   ]);
 
-  const [budgetData, setBudgetData] = useState([
+  const budgetData = [
     { name: "Accommodation", value: 36 },
     { name: "Transportation", value: 24 },
     { name: "Activities", value: 12 },
     { name: "Food & Dining", value: 18 },
     { name: "Options", value: 10 },
-  ]);
+  ];
 
   const formatBudget = (budget) => {
     if (budget >= 1000) {
@@ -89,7 +89,8 @@ function StatsPage() {
         setStats({
           totalTrips: trips.length,
           countriesVisited: countries.size,
-          avgTripLength: trips.length > 0 ? Math.round(totalDays / trips.length) : 0,
+          avgTripLength:
+            trips.length > 0 ? Math.round(totalDays / trips.length) : 0,
           totalBudget,
         });
 
@@ -98,7 +99,7 @@ function StatsPage() {
           prev.map((item, index) => ({
             ...item,
             trips: monthCounts[index],
-          }))
+          })),
         );
 
         // Optional: dynamic budget based on totalBudget, but percentage logic usually stays fixed
@@ -116,15 +117,21 @@ function StatsPage() {
   const COLORS = ["#000000", "#333333", "#666666", "#999999", "#CCCCCC"];
 
   if (loading) {
-    return <div className="text-center mt-20 text-xl font-bold">Loading...</div>;
+    return (
+      <div className="text-center mt-20 text-xl font-bold">Loading...</div>
+    );
   }
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10 mt-5">
       {/* Header section */}
       <div className="text-center mb-10">
-        <h1 className="text-4xl font-extrabold text-black mb-2">Travel Statistics</h1>
-        <p className="text-gray-600 text-lg">Your travel journey by the numbers</p>
+        <h1 className="text-4xl font-extrabold text-black mb-2">
+          Travel Statistics
+        </h1>
+        <p className="text-gray-600 text-lg">
+          Your travel journey by the numbers
+        </p>
       </div>
 
       {/* Summary Cards */}
@@ -155,7 +162,8 @@ function StatsPage() {
               Avg Trip Length
             </p>
             <h2 className="text-4xl font-bold">
-              {stats.avgTripLength} <span className="text-sm font-normal text-gray-300">days</span>
+              {stats.avgTripLength}{" "}
+              <span className="text-sm font-normal text-gray-300">days</span>
             </h2>
           </div>
           <Clock className="w-8 h-8 opacity-80" />
@@ -166,7 +174,9 @@ function StatsPage() {
             <p className="text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wider">
               Total Budget
             </p>
-            <h2 className="text-4xl font-bold">{formatBudget(stats.totalBudget)}</h2>
+            <h2 className="text-4xl font-bold">
+              {formatBudget(stats.totalBudget)}
+            </h2>
           </div>
           <DollarSign className="w-8 h-8 opacity-80" />
         </div>
@@ -187,12 +197,33 @@ function StatsPage() {
           </div>
           <div className="w-full flex-grow">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={monthlyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
+              <BarChart
+                data={monthlyData}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#e5e7eb"
+                />
+                <XAxis
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12 }}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12 }}
+                />
                 <Tooltip cursor={{ fill: "#f3f4f6" }} />
-                <Bar dataKey="trips" fill="#000000" radius={[4, 4, 0, 0]} barSize={30} />
+                <Bar
+                  dataKey="trips"
+                  fill="#000000"
+                  radius={[4, 4, 0, 0]}
+                  barSize={30}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -205,7 +236,9 @@ function StatsPage() {
               <DollarSign className="w-5 h-5" />
               Budget Breakdown
             </h3>
-            <p className="text-sm text-gray-500">How you spend your travel budget</p>
+            <p className="text-sm text-gray-500">
+              How you spend your travel budget
+            </p>
           </div>
           <div className="w-full flex-grow flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
@@ -222,7 +255,10 @@ function StatsPage() {
                   stroke="none"
                 >
                   {budgetData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
                   ))}
                 </Pie>
                 <Tooltip />
