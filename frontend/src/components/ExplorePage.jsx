@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Search, Filter, Star, Clock, MapPin, Users, Sun } from "lucide-react";
+import { Search, Filter, Star, Clock, MapPin, Users, Sun, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 const destinations = [
   {
@@ -312,44 +313,68 @@ function ExplorePage() {
     ? (searchQuery.trim().length >= 3 ? apiResults : localDestinations).slice(0, 1)
     : localDestinations;
 
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mt-5">
-      {/* Header section */}
-      <div className="text-center mb-10">
-        <h1 className="text-4xl font-bold text-black mb-2">Popular Destinations</h1>
-        <p className="text-gray-600 text-lg">
-          Discover amazing places around the world and plan your next adventure
-        </p>
-      </div>
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08
+      }
+    }
+  };
 
-      {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="flex-grow flex items-center border-2 border-black rounded-lg px-3 py-2 bg-white hover:border-gray-600 transition-colors">
-          <Search className="w-5 h-5 text-black mr-2 opacity-70" />
+  const cardVariants = {
+    hidden: { opacity: 0, y: 25 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 22 } }
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto px-6 py-12 space-y-10">
+      {/* Header section */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center space-y-2"
+      >
+        <h1 className="text-4xl font-extrabold tracking-tight text-white flex items-center justify-center gap-2">
+          <Sparkles className="h-8 w-8 text-neutral-200" />
+          <span>Popular Destinations</span>
+        </h1>
+        <p className="text-slate-400 font-medium max-w-xl mx-auto text-lg leading-relaxed">
+          Discover incredible regions across the globe and draft your perfect custom itinerary.
+        </p>
+      </motion.div>
+
+      {/* Search and Filters Console */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-grow flex items-center bg-glass border-glass rounded-xl px-4 py-3 group focus-within:ring-2 focus-within:ring-white/10 transition-all">
+          <Search className="w-5 h-5 text-slate-500 mr-3 shrink-0 group-focus-within:text-white transition-colors" />
           <input 
             type="text" 
-            placeholder="Search destinations..." 
-            className="w-full outline-none bg-transparent"
+            placeholder="Search destinations (e.g. Santorini, Jaipur, Tokyo...)" 
+            className="w-full bg-transparent text-white placeholder-slate-500 outline-none text-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <button className="flex items-center justify-center gap-2 border-2 border-black rounded-lg px-6 py-2 font-bold hover:bg-gray-100 active:scale-95 transition-all">
-          <Filter className="w-5 h-5" />
-          More Filters
+        
+        <button className="flex items-center justify-center gap-2 rounded-xl bg-glass border-glass px-6 py-3 font-bold text-slate-300 hover:text-white hover:bg-white/5 active:scale-95 transition-all text-sm shrink-0">
+          <Filter className="w-4 h-4" />
+          <span>More Filters</span>
         </button>
       </div>
 
-      {/* Categories */}
-      <div className="flex flex-wrap gap-3 mb-10">
+      {/* Category Tabs */}
+      <div className="flex flex-wrap gap-2.5 pb-2">
         {categories.map((cat) => (
           <button
             key={cat.name}
             onClick={() => setActiveCategory(cat.name)}
-            className={`px-4 py-2 rounded-lg border-2 font-bold transition-all active:scale-95 ${
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold border transition-all active:scale-95 duration-300 ${
               activeCategory === cat.name
-                ? "bg-black text-white border-black"
-                : "bg-white text-black border-black hover:bg-gray-100"
+                ? "bg-white border-white text-black shadow-lg shadow-white/5"
+                : "bg-glass border-glass text-slate-400 hover:text-slate-200 hover:bg-white/5"
             }`}
           >
             {cat.name} ({cat.count})
@@ -358,107 +383,144 @@ function ExplorePage() {
       </div>
 
       {/* Grid of Results */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-        {displayDestinations.length === 0 ? (
-          <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-20">
-            <h2 className="text-2xl font-bold text-gray-500 mb-2">
-              {isSearching ? "Searching the globe..." : "No destinations found"}
-            </h2>
-            <p className="text-gray-400">Try adjusting your filters or search query.</p>
-          </div>
-        ) : (
-          displayDestinations.map((dest) => (
-            <div key={dest.id} className="border-2 border-black rounded-2xl overflow-hidden flex flex-col bg-white hover:shadow-xl transition-shadow duration-300">
-              {/* Image Section */}
-              <div className="h-56 w-full relative">
-                <img src={dest.image} alt={dest.title} className="w-full h-full object-cover" />
-                <div className="absolute top-3 right-3 bg-white px-3 py-1 rounded-full text-sm font-bold border-2 border-black shadow-sm">
-                  From ${dest.price}/day
-                </div>
-                <div className="absolute bottom-3 left-3 text-white flex items-center gap-1 font-bold drop-shadow-md">
-                  <Star className="w-4 h-4 fill-white" />
-                  {dest.rating} <span className="font-normal text-sm opacity-90">({dest.reviews})</span>
-                </div>
-              </div>
-
-              {/* Content Section */}
-              <div className="p-5 flex flex-col flex-grow">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-xl font-bold">{dest.title}</h3>
-                  <div className="flex items-center text-sm text-gray-600 gap-1 font-medium mt-1">
-                    <Clock className="w-4 h-4" />
-                    {dest.duration} days
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 card-wrapper"
+      >
+        <AnimatePresence mode="popLayout">
+          {displayDestinations.length === 0 ? (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="col-span-full text-center py-20 bg-glass border-glass rounded-3xl"
+            >
+              <h2 className="text-xl font-bold text-slate-300 mb-2">
+                {isSearching ? "Scouring the globe..." : "No destinations found"}
+              </h2>
+              <p className="text-slate-500 text-sm">Try tweaking your search phrase or choosing another filter category.</p>
+            </motion.div>
+          ) : (
+            displayDestinations.map((dest) => (
+              <motion.div 
+                key={dest.id} 
+                variants={cardVariants}
+                layout
+                whileHover={{ y: -6 }}
+                className="trip-card flex flex-col justify-between rounded-2xl bg-glass border-glass overflow-hidden shadow-xl"
+              >
+                {/* Image section */}
+                <div className="h-52 w-full relative overflow-hidden group">
+                  <img 
+                    src={dest.image} 
+                    alt={dest.title} 
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                  />
+                  <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md px-3 py-1 rounded-full text-xs font-extrabold border border-white/10 text-white shadow-md">
+                    From ${dest.price}/day
+                  </div>
+                  <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-slate-900/80 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-bold border border-white/10 text-white shadow-md">
+                    <Star className="w-3.5 h-3.5 fill-white text-white shrink-0" />
+                    <span>{dest.rating}</span>
+                    <span className="text-slate-400 font-medium">({dest.reviews})</span>
                   </div>
                 </div>
-                
-                <p className="text-sm text-gray-700 mb-4 line-clamp-2">
-                  {dest.description}
-                </p>
 
-                <div className="flex flex-wrap gap-2 mb-6 mt-auto">
-                  {dest.tags.map((tag, idx) => (
-                    <span key={idx} className="text-xs font-bold border-2 border-black px-2 py-1 rounded-md">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+                {/* Content Section */}
+                <div className="p-5 flex flex-col flex-grow justify-between space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-start gap-2">
+                      <h3 className="text-lg font-extrabold text-white leading-tight truncate">{dest.title}</h3>
+                      <div className="flex items-center text-xs text-slate-400 font-bold shrink-0 gap-1 mt-0.5">
+                        <Clock className="w-3.5 h-3.5 text-neutral-400" />
+                        <span>{dest.duration} days</span>
+                      </div>
+                    </div>
+                    
+                    <p className="text-sm text-slate-300 font-medium leading-relaxed line-clamp-2">
+                      {dest.description}
+                    </p>
+                  </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-2">
-                  <Link 
-                    to="/plantrip" 
-                    state={{ 
-                      destination: dest.title, 
-                      durationDays: parseInt(dest.duration, 10) || 5,
-                      budget: dest.price * (parseInt(dest.duration, 10) || 5)
-                    }}
-                    className="flex-grow"
-                  >
-                    <button className="w-full bg-black text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-800 active:scale-95 transition-all">
-                      <MapPin className="w-4 h-4" />
-                      Plan Trip
-                    </button>
-                  </Link>
-                  <button 
-                    onClick={() => alert(`Invite link for ${dest.title} copied to clipboard! 📋`)}
-                    className="border-2 border-black p-2 rounded-lg hover:bg-gray-100 active:scale-95 transition-all"
-                  >
-                    <Users className="w-5 h-5" />
-                  </button>
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {dest.tags.map((tag, idx) => (
+                      <span key={idx} className="text-[10px] font-bold bg-white/5 border border-white/10 text-neutral-300 px-2 py-0.5 rounded-md">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 pt-2">
+                    <Link 
+                      to="/plantrip" 
+                      state={{ 
+                        destination: dest.title, 
+                        durationDays: parseInt(dest.duration, 10) || 5,
+                        budget: dest.price * (parseInt(dest.duration, 10) || 5),
+                        image: dest.image
+                      }}
+                      className="flex-grow"
+                    >
+                      <motion.button 
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="w-full bg-white text-black font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-200 shadow-lg shadow-white/5 text-sm transition-all"
+                      >
+                        <MapPin className="w-4 h-4 text-black" />
+                        <span>Plan Trip</span>
+                      </motion.button>
+                    </Link>
+                    <motion.button 
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => alert(`Invite link for ${dest.title} copied to clipboard! 📋`)}
+                      className="border border-white/10 rounded-xl p-2.5 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-colors shrink-0"
+                    >
+                      <Users className="w-4 h-4" />
+                    </motion.button>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
+              </motion.div>
+            ))
+          )}
+        </AnimatePresence>
+      </motion.div>
 
       {/* Travel Tips Section */}
-      <div className="border-2 border-black rounded-2xl p-6 bg-white mb-10">
-        <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-          <Sun className="w-6 h-6 text-yellow-500 fill-yellow-500" />
-          Travel Tips
+      <motion.div 
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="rounded-3xl bg-glass border-glass p-6 md:p-8 shadow-xl"
+      >
+        <h2 className="text-xl font-extrabold text-white mb-6 flex items-center gap-2">
+          <Sun className="w-5 h-5 text-white fill-white/10" />
+          <span>Intelligent Travel Tips</span>
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <h4 className="font-bold mb-2">Best Time to Book</h4>
-            <p className="text-sm text-gray-600">
-              Book international flights 2-3 months in advance for the best deals
+          <div className="space-y-1.5 p-4 rounded-2xl bg-slate-950/40 border border-white/5">
+            <h4 className="font-bold text-white text-sm">Best Time to Book</h4>
+            <p className="text-xs text-slate-400 font-medium leading-relaxed">
+              Secure international flights 2-3 months prior for standard pricing. Use Wikipedia Search to explore destinations.
             </p>
           </div>
-          <div>
-            <h4 className="font-bold mb-2">Travel Insurance</h4>
-            <p className="text-sm text-gray-600">
-              Always get travel insurance, especially for adventure destinations
+          <div className="space-y-1.5 p-4 rounded-2xl bg-slate-950/40 border border-white/5">
+            <h4 className="font-bold text-white text-sm">Travel Insurance</h4>
+            <p className="text-xs text-slate-400 font-medium leading-relaxed">
+              Always request insurance options when locking budget bounds, especially when hiking or doing snow sports.
             </p>
           </div>
-          <div>
-            <h4 className="font-bold mb-2">Local Currency</h4>
-            <p className="text-sm text-gray-600">
-              Research local payment methods and exchange rates before traveling
+          <div className="space-y-1.5 p-4 rounded-2xl bg-slate-950/40 border border-white/5">
+            <h4 className="font-bold text-white text-sm">Local Currency</h4>
+            <p className="text-xs text-slate-400 font-medium leading-relaxed">
+              Review standard payments, tipping customs, and current exchange rates before touching down.
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

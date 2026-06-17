@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Plane, Globe, Clock, DollarSign, Calendar } from "lucide-react";
+import { Plane, Globe, Clock, DollarSign, Calendar, Sparkles } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -12,6 +12,7 @@ import {
   Cell,
   Tooltip,
 } from "recharts";
+import { motion } from "framer-motion";
 import api from "../api";
 
 function StatsPage() {
@@ -70,7 +71,7 @@ function StatsPage() {
           if (trip.destinations && trip.destinations.length > 0) {
             trip.destinations.forEach((d) => countries.add(d.name));
           } else if (trip.title) {
-            countries.add(trip.title); // fallback
+            countries.add(trip.title);
           }
 
           if (trip.startDate && trip.endDate) {
@@ -80,7 +81,6 @@ function StatsPage() {
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             totalDays += diffDays;
 
-            // month counts
             const month = start.getMonth();
             monthCounts[month] += 1;
           }
@@ -94,16 +94,12 @@ function StatsPage() {
           totalBudget,
         });
 
-        // Set monthly chart data
         setMonthlyData((prev) =>
           prev.map((item, index) => ({
             ...item,
             trips: monthCounts[index],
           })),
         );
-
-        // Optional: dynamic budget based on totalBudget, but percentage logic usually stays fixed
-        // or derived from real itinerary data which isn't fully structured yet natively.
       } catch (error) {
         console.error("Failed to fetch trips for stats", error);
       } finally {
@@ -114,145 +110,200 @@ function StatsPage() {
     fetchTrips();
   }, []);
 
-  const COLORS = ["#000000", "#333333", "#666666", "#999999", "#CCCCCC"];
+  const COLORS = ["#ffffff", "#e5e5e5", "#a3a3a3", "#525252", "#262626"];
 
   if (loading) {
     return (
-      <div className="text-center mt-20 text-xl font-bold">Loading...</div>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-white border-t-transparent" />
+        <p className="text-slate-400 font-bold">Assembling analytics...</p>
+      </div>
     );
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 22 } }
+  };
+
+  const statItems = [
+    {
+      label: "Total Trips",
+      value: stats.totalTrips,
+      icon: Plane,
+      color: "text-white bg-white/10 border-white/20",
+    },
+    {
+      label: "Countries Visited",
+      value: stats.countriesVisited,
+      icon: Globe,
+      color: "text-white bg-white/10 border-white/20",
+    },
+    {
+      label: "Avg Trip Length",
+      value: `${stats.avgTripLength} days`,
+      icon: Clock,
+      color: "text-white bg-white/10 border-white/20",
+    },
+    {
+      label: "Total Budget",
+      value: formatBudget(stats.totalBudget),
+      icon: DollarSign,
+      color: "text-white bg-white/10 border-white/20",
+    },
+  ];
+
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10 mt-5">
+    <div className="max-w-6xl mx-auto px-6 py-12 space-y-12">
       {/* Header section */}
-      <div className="text-center mb-10">
-        <h1 className="text-4xl font-extrabold text-black mb-2">
-          Travel Statistics
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center space-y-2"
+      >
+        <h1 className="text-4xl font-extrabold tracking-tight text-white flex items-center justify-center gap-2">
+          <Sparkles className="h-8 w-8 text-white" />
+          <span>Travel Statistics</span>
         </h1>
-        <p className="text-gray-600 text-lg">
-          Your travel journey by the numbers
+        <p className="text-slate-400 font-medium max-w-md mx-auto text-lg">
+          Your travel journey mapped by the numbers
         </p>
-      </div>
+      </motion.div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <div className="bg-black text-white p-6 rounded-2xl flex items-center justify-between shadow-lg">
-          <div>
-            <p className="text-xs text-gray-400 font-semibold mb-1 uppercase tracking-wider">
-              Total Trips
-            </p>
-            <h2 className="text-4xl font-bold">{stats.totalTrips}</h2>
-          </div>
-          <Plane className="w-8 h-8 opacity-80" />
-        </div>
-
-        <div className="bg-white text-black p-6 rounded-2xl flex items-center justify-between border-2 border-black shadow-sm">
-          <div>
-            <p className="text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wider">
-              Countries Visited
-            </p>
-            <h2 className="text-4xl font-bold">{stats.countriesVisited}</h2>
-          </div>
-          <Globe className="w-8 h-8 opacity-80" />
-        </div>
-
-        <div className="bg-black text-white p-6 rounded-2xl flex items-center justify-between shadow-lg">
-          <div>
-            <p className="text-xs text-gray-400 font-semibold mb-1 uppercase tracking-wider">
-              Avg Trip Length
-            </p>
-            <h2 className="text-4xl font-bold">
-              {stats.avgTripLength}{" "}
-              <span className="text-sm font-normal text-gray-300">days</span>
-            </h2>
-          </div>
-          <Clock className="w-8 h-8 opacity-80" />
-        </div>
-
-        <div className="bg-white text-black p-6 rounded-2xl flex items-center justify-between border-2 border-black shadow-sm">
-          <div>
-            <p className="text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wider">
-              Total Budget
-            </p>
-            <h2 className="text-4xl font-bold">
-              {formatBudget(stats.totalBudget)}
-            </h2>
-          </div>
-          <DollarSign className="w-8 h-8 opacity-80" />
-        </div>
-      </div>
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+      >
+        {statItems.map((item, idx) => {
+          const Icon = item.icon;
+          return (
+            <motion.div
+              key={idx}
+              variants={itemVariants}
+              whileHover={{ y: -4, scale: 1.02 }}
+              className="bg-glass border-glass p-6 rounded-2xl flex items-center justify-between shadow-xl relative overflow-hidden"
+            >
+              <div className="absolute -top-10 -right-10 w-24 h-24 bg-white/5 rounded-full blur-xl pointer-events-none" />
+              <div className="space-y-1">
+                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
+                  {item.label}
+                </p>
+                <h2 className="text-3xl font-extrabold text-white">{item.value}</h2>
+              </div>
+              <div className={`p-3 rounded-xl border ${item.color} shadow-inner`}>
+                <Icon className="w-6 h-6" />
+              </div>
+            </motion.div>
+          );
+        })}
+      </motion.div>
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
         {/* Bar Chart Container */}
-        <div className="bg-white border-2 border-black rounded-2xl p-6 shadow-sm flex flex-col items-start h-[400px]">
-          <div className="flex flex-col items-start justify-center gap-1 mb-6">
-            <h3 className="font-bold text-lg flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
-              Trips by Month
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="bg-glass border-glass rounded-2xl p-6 shadow-xl flex flex-col h-[420px]"
+        >
+          <div className="space-y-1 mb-6">
+            <h3 className="font-extrabold text-lg text-white flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-white" />
+              <span>Trips by Month</span>
             </h3>
-            <p className="text-sm text-gray-500">
-              Your travel activity throughout the year
+            <p className="text-xs text-slate-400 font-medium">
+              Your travel activity throughout the calendar year
             </p>
           </div>
-          <div className="w-full flex-grow">
+          <div className="w-full flex-grow text-xs">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={monthlyData}
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
+                <defs>
+                  <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#ffffff" stopOpacity={0.8} />
+                    <stop offset="100%" stopColor="#ffffff" stopOpacity={0.15} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid
                   strokeDasharray="3 3"
                   vertical={false}
-                  stroke="#e5e7eb"
+                  stroke="rgba(255,255,255,0.05)"
                 />
                 <XAxis
                   dataKey="name"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12 }}
+                  tick={{ fill: "#94a3b8" }}
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12 }}
+                  tick={{ fill: "#94a3b8" }}
                 />
-                <Tooltip cursor={{ fill: "#f3f4f6" }} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: "#000000", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "#fff" }} 
+                  cursor={{ fill: "rgba(255,255,255,0.02)" }} 
+                />
                 <Bar
                   dataKey="trips"
-                  fill="#000000"
-                  radius={[4, 4, 0, 0]}
-                  barSize={30}
+                  fill="url(#barGradient)"
+                  radius={[6, 6, 0, 0]}
+                  barSize={24}
                 />
               </BarChart>
             </ResponsiveContainer>
           </div>
-        </div>
+        </motion.div>
 
         {/* Pie Chart Container */}
-        <div className="bg-white border-2 border-black rounded-2xl p-6 shadow-sm flex flex-col items-start h-[400px]">
-          <div className="flex flex-col items-start justify-center gap-1 mb-6">
-            <h3 className="font-bold text-lg flex items-center gap-2">
-              <DollarSign className="w-5 h-5" />
-              Budget Breakdown
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="bg-glass border-glass rounded-2xl p-6 shadow-xl flex flex-col h-[420px]"
+        >
+          <div className="space-y-1 mb-6">
+            <h3 className="font-extrabold text-lg text-white flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-white" />
+              <span>Budget Allocation</span>
             </h3>
-            <p className="text-sm text-gray-500">
-              How you spend your travel budget
+            <p className="text-xs text-slate-400 font-medium">
+              Standard expenditure allocations for travel
             </p>
           </div>
-          <div className="w-full flex-grow flex items-center justify-center">
+          <div className="w-full flex-grow flex items-center justify-center text-[10px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={budgetData}
                   cx="50%"
                   cy="50%"
-                  labelLine={true}
-                  label={({ name, value }) => `${name} ${value}%`}
-                  outerRadius={100}
+                  labelLine={false}
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={105}
                   fill="#8884d8"
                   dataKey="value"
-                  stroke="none"
+                  stroke="rgba(0, 0, 0, 0.8)"
+                  strokeWidth={2}
                 >
                   {budgetData.map((entry, index) => (
                     <Cell
@@ -261,11 +312,13 @@ function StatsPage() {
                     />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: "#000000", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "#fff" }} 
+                />
               </PieChart>
             </ResponsiveContainer>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

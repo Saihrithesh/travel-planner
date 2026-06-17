@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Route, Routes, useLocation, Navigate } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
 import HomePage from "./components/HomePage";
@@ -7,10 +9,13 @@ import MyTrips from "./components/MyTrips";
 import StatsPage from "./components/StatsPage";
 import ExplorePage from "./components/ExplorePage";
 import Navbar from "./components/Navbar";
+import InitialLoader from "./components/InitialLoader";
+import CursorTrail from "./components/CursorTrail";
 
 function App() {
   const location = useLocation();
   const token = localStorage.getItem("token");
+  const [isAppLoading, setIsAppLoading] = useState(true);
 
   const hideNavbarRoutes = ["/signin", "/signup"];
   const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
@@ -29,6 +34,12 @@ function App() {
 
   return (
     <>
+      <CursorTrail />
+      <AnimatePresence mode="wait">
+        {isAppLoading && (
+          <InitialLoader onComplete={() => setIsAppLoading(false)} />
+        )}
+      </AnimatePresence>
       {shouldShowNavbar && <Navbar />}
 
       <Routes>

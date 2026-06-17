@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { PlusCircle, Calendar, Compass, BarChart3, ArrowRight, Sparkles, MapPin } from "lucide-react";
 
 function HomePage() {
   const [userName, setUserName] = useState("User");
-  
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -19,120 +20,253 @@ function HomePage() {
         console.error("Failed to parse user data", err);
       }
     } else {
-      setUserName("Guest"); // Fallback for unauthenticated viewers
+      setUserName("Guest");
     }
   }, []);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  };
+
+  const actionCards = [
+    {
+      to: "/plantrip",
+      title: "Plan a Trip",
+      description: "Start planning your next adventure",
+      icon: PlusCircle,
+      gradient: "from-neutral-950/60 to-neutral-900/60 hover:shadow-white/5 border-white/10 hover:border-white/30",
+      iconColor: "text-neutral-200"
+    },
+    {
+      to: "/mytrips",
+      title: "View My Trips",
+      description: "See all your planned journeys",
+      icon: Calendar,
+      gradient: "from-neutral-950/60 to-neutral-900/60 hover:shadow-white/5 border-white/10 hover:border-white/30",
+      iconColor: "text-neutral-200"
+    },
+    {
+      to: "/explore",
+      title: "Explore Hub",
+      description: "Discover stunning destinations",
+      icon: Compass,
+      gradient: "from-neutral-950/60 to-neutral-900/60 hover:shadow-white/5 border-white/10 hover:border-white/30",
+      iconColor: "text-neutral-200"
+    },
+    {
+      to: "/stats",
+      title: "Travel Stats",
+      description: "Track your travel progress",
+      icon: BarChart3,
+      gradient: "from-neutral-950/60 to-neutral-900/60 hover:shadow-white/5 border-white/10 hover:border-white/30",
+      iconColor: "text-neutral-200"
+    }
+  ];
+
+  const popularDestinations = [
+    {
+      title: "Urban Explorer",
+      category: "Cities",
+      tagline: "Discover vibrant cities & cultural hotspots",
+      image: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      title: "Nature Adventure",
+      category: "Nature",
+      tagline: "Explore mountains, forests & natural wonders",
+      image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      title: "Coastal Escape",
+      category: "Beaches",
+      tagline: "Relax on pristine beaches and islands",
+      image: "https://images.unsplash.com/photo-1471922694854-ff1b63b20054?auto=format&fit=crop&w=600&q=80"
+    }
+  ];
+
   return (
-    <div>
-      <div className="ml-10 lg:ml-36">
-        <h1 className="text-4xl font-bold mt-5">Welcome back, {userName}!</h1>
-        <p className="mt-2">
-          Ready to plan your next adventure? Let's make it memorable
-        </p>
-      </div>
-      <div className="flex flex-wrap justify-center mt-6 gap-5">
-        <Link to="/plantrip">
-          <div className="flex flex-col justify-center transition-all duration-300 hover:-translate-y-2 hover:shadow-lg active:scale-95">
-            <div className="flex flex-col justify-center items-center border-2 border-black bg-white rounded-xl p-5 w-[300px] h-[200px]">
-              <img
-                className="w-[70px] h-[70px]"
-                src="https://res.cloudinary.com/dceeihrlp/image/upload/v1758277945/add_w3p8hi.png"
-                alt="plan"
+    <div className="max-w-6xl mx-auto px-6 py-12 space-y-16">
+      {/* Welcome Hero Section */}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6 }}
+        className="relative overflow-hidden rounded-3xl bg-glass border-glass p-8 md:p-12 shadow-2xl backdrop-blur-xl"
+      >
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
+
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          {/* Left Column: Copy & CTAs */}
+          <div className="lg:col-span-7 space-y-6 text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-neutral-300 text-xs font-semibold">
+              <Sparkles className="h-3 w-3" />
+              <span>Welcome back, {userName}</span>
+            </div>
+            
+            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
+              Plan Your Next <span className="bg-gradient-to-r from-white via-neutral-200 to-neutral-400 bg-clip-text text-transparent">Adventure</span>. Seamlessly.
+            </h1>
+            
+            <p className="text-base md:text-lg text-slate-400 font-medium leading-relaxed max-w-xl">
+              The ultimate planner for modern travelers. Curate detailed itineraries, monitor budgets with precision, and uncover global destinations in real-time.
+            </p>
+
+            <div className="flex flex-wrap gap-4 pt-2">
+              <Link to="/plantrip">
+                <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 font-bold text-black shadow-lg shadow-white/5 hover:bg-neutral-200 transition-all text-sm"
+                >
+                  <PlusCircle className="h-4 w-4" />
+                  <span>Get Started - Plan Trip</span>
+                </motion.button>
+              </Link>
+              
+              <Link to="/explore">
+                <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 px-6 py-3 font-bold text-slate-300 hover:text-white transition-all text-sm"
+                >
+                  <Compass className="h-4 w-4" />
+                  <span>Explore Hub</span>
+                </motion.button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Right Column: Interactive Mockup Illustration */}
+          <div className="lg:col-span-5 relative flex justify-center w-full">
+            <motion.div 
+              initial={{ x: 30, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="relative w-full max-w-[360px] aspect-square rounded-full border border-white/10 bg-neutral-950/40 p-2 shadow-2xl overflow-hidden group"
+            >
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/5 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+              <motion.img 
+                src="/travel_planner_hero_ui.png" 
+                alt="Travel Planner Interface Screenshot" 
+                className="rounded-full w-full h-full object-cover shadow-inner"
+                animate={{ rotate: 360 }}
+                whileHover={{ scale: 1.03 }}
+                transition={{ 
+                  rotate: { duration: 30, ease: "linear", repeat: Infinity },
+                  scale: { duration: 0.4, ease: "easeOut" }
+                }}
               />
-              <h1 className="font-bold text-xl mt-4 text-black">Plan a trip</h1>
-              <p className="text-gray-600">Start planning your next adventure</p>
-            </div>
+            </motion.div>
           </div>
-        </Link>
-        <Link to="/mytrips">
-          <div className="flex flex-col justify-center transition-all duration-300 hover:-translate-y-2 hover:shadow-lg active:scale-95">
-            <div className="flex flex-col justify-center items-center border-2 border-black bg-white rounded-xl p-5 w-[300px] h-[200px]">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-[70px] h-[70px]">
-                <path d="M576 112C576 100.9 570.3 90.6 560.8 84.8C551.3 79 539.6 78.4 529.7 83.4L413.5 141.5L234.1 81.6C226 78.9 217.3 79.5 209.7 83.3L81.7 147.3C70.8 152.8 64 163.9 64 176L64 528C64 539.1 69.7 549.4 79.2 555.2C88.7 561 100.4 561.6 110.3 556.6L226.4 498.5L405.8 558.3C413.9 561 422.6 560.4 430.2 556.6L558.2 492.6C569 487.2 575.9 476.1 575.9 464L575.9 112zM256 440.9L256 156.4L384 199.1L384 483.6L256 440.9z" />
-              </svg>
-              <h1 className="font-bold text-xl mt-4 text-black">View my trips</h1>
-              <p className="text-gray-600">See all your planned journeys</p>
-            </div>
-          </div>
-        </Link>
-        <Link to="/explore">
-          <div className="flex flex-col justify-center transition-all duration-300 hover:-translate-y-2 hover:shadow-lg active:scale-95">
-            <div className="flex flex-col justify-center items-center border-2 border-black bg-white rounded-xl p-5 w-[300px] h-[200px]">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-[70px] h-[70px]">
-                <path d="M528 320C528 205.1 434.9 112 320 112C205.1 112 112 205.1 112 320C112 434.9 205.1 528 320 528C434.9 528 528 434.9 528 320zM64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320zM370.7 389.1L226.4 444.6C207 452.1 187.9 433 195.4 413.6L250.9 269.3C254.2 260.8 260.8 254.2 269.3 250.9L413.6 195.4C433 187.9 452.1 207 444.6 226.4L389.1 370.7C385.8 379.2 379.2 385.8 370.7 389.1zM352 320C352 302.3 337.7 288 320 288C302.3 288 288 302.3 288 320C288 337.7 302.3 352 320 352C337.7 352 352 337.7 352 320z" />
-              </svg>
-              <h1 className="font-bold text-xl mt-4 text-black">Explore</h1>
-              <p className="text-gray-600">Discover new destinations</p>
-            </div>
-          </div>
-        </Link>
-        <Link to="/stats">
-          <div className="flex flex-col justify-center transition-all duration-300 hover:-translate-y-2 hover:shadow-lg">
-            <div className="flex flex-col justify-center items-center border-2 border-black bg-white rounded-xl p-5 w-[300px] h-[200px]">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-[70px] h-[70px]">
-                <path d="M416 224C398.3 224 384 209.7 384 192C384 174.3 398.3 160 416 160L576 160C593.7 160 608 174.3 608 192L608 352C608 369.7 593.7 384 576 384C558.3 384 544 369.7 544 352L544 269.3L374.6 438.7C362.1 451.2 341.8 451.2 329.3 438.7L224 333.3L86.6 470.6C74.1 483.1 53.8 483.1 41.3 470.6C28.8 458.1 28.8 437.8 41.3 425.3L201.3 265.3C213.8 252.8 234.1 252.8 246.6 265.3L352 370.7L498.7 224L416 224z" />
-              </svg>
-              <h1 className="font-bold text-xl mt-4 text-black">Travel stats</h1>
-              <p className="text-gray-600">Track your travel progress</p>
-            </div>
-          </div>
-        </Link>
+        </div>
+      </motion.div>
+
+      {/* Main Grid Actions */}
+      <div className="space-y-6">
+        <h2 className="text-2xl font-extrabold text-white tracking-tight">Quick Actions</h2>
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+        >
+          {actionCards.map((card, idx) => {
+            const Icon = card.icon;
+            return (
+              <motion.div
+                key={idx}
+                variants={itemVariants}
+                whileHover={{ y: -6, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`flex flex-col justify-between rounded-2xl bg-gradient-to-br ${card.gradient} border p-6 shadow-lg backdrop-blur-md transition-shadow duration-300`}
+              >
+                <div className="space-y-4">
+                  <div className={`inline-flex p-3 rounded-xl bg-slate-900/60 border border-white/5 ${card.iconColor} shadow-md`}>
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-bold text-lg text-white">{card.title}</h3>
+                    <p className="text-sm text-slate-400 font-medium leading-normal">{card.description}</p>
+                  </div>
+                </div>
+                
+                <Link to={card.to} className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-neutral-400 hover:text-white transition-colors group">
+                  <span>Open</span>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </motion.div>
+            );
+          })}
+        </motion.div>
       </div>
-      <div className="ml-10 lg:ml-36 mt-12 pb-10">
-        <h1 className="font-bold text-2xl mb-5">Popular Destinations</h1>
-        <div className="flex flex-wrap gap-10">
-          <div className="w-[400px] h-[250px] border-2 rounded-md flex flex-col hover:shadow-lg transition">
-            <div className="w-[100%] h-40 bg-[url('https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=400&q=80')] bg-cover relative rounded-t-md">
-              <div className="absolute inset-0 bg-black/30 flex flex-col justify-end p-5 rounded-t-md">
-                <p className="text-white font-bold text-lg text-left">
-                  Urban Explorer
-                </p>
-              </div>
-            </div>
-            <p className="text-md mt-2 ml-4 text-left font-medium">
-              Discover vibrant cities and cultural hotspots
-            </p>
-            <Link to="/explore" className="mt-auto mb-2 ml-4">
-              <button className="border-1 text-center p-2 bg-black text-white font-bold rounded-md w-32 hover:bg-gray-800 active:scale-95 transition">
-                Explore more
-              </button>
-            </Link>
+
+      {/* Popular Destinations section */}
+      <div className="space-y-8 pb-10">
+        <div className="flex justify-between items-end">
+          <div className="space-y-1">
+            <h2 className="text-2xl font-extrabold text-white tracking-tight">Popular Destinations</h2>
+            <p className="text-sm text-slate-400 font-medium">Curated wanderlists for the curious traveller</p>
           </div>
-          <div className="w-[400px] h-[250px] border-2 rounded-md flex flex-col hover:shadow-lg transition">
-            <div className="w-[100%] h-40 bg-[url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80')] bg-cover relative rounded-t-md">
-              <div className="absolute inset-0 bg-black/30 flex flex-col justify-end p-5 rounded-t-md">
-                <p className="text-white font-bold text-lg text-left">
-                  Nature Adventure
-                </p>
+          <Link to="/explore" className="text-neutral-400 hover:text-white text-sm font-bold flex items-center gap-1.5 transition-colors">
+            <span>View all</span>
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {popularDestinations.map((dest, idx) => (
+            <motion.div 
+              key={idx}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 * idx, duration: 0.5 }}
+              whileHover={{ y: -6 }}
+              className="group overflow-hidden rounded-2xl bg-glass border-glass flex flex-col shadow-xl"
+            >
+              <div className="h-48 w-full relative overflow-hidden">
+                <img 
+                  src={dest.image} 
+                  alt={dest.title} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent flex flex-col justify-end p-5">
+                  <div className="flex items-center gap-1.5 text-xs text-neutral-300 font-bold mb-1 uppercase tracking-wider">
+                    <MapPin className="h-3.5 w-3.5 text-white" />
+                    {dest.category}
+                  </div>
+                  <h3 className="text-white font-extrabold text-xl">{dest.title}</h3>
+                </div>
               </div>
-            </div>
-            <p className="text-md mt-2 ml-4 text-left font-medium">
-              Explore mountains, forests and natural wonders
-            </p>
-            <Link to="/explore" className="mt-auto mb-2 ml-4">
-              <button className="border-1 text-center p-2 bg-black text-white font-bold rounded-md w-32 hover:bg-gray-800 active:scale-95 transition">
-                Explore more
-              </button>
-            </Link>
-          </div>
-          <div className="w-[400px] h-[250px] border-2 rounded-md flex flex-col hover:shadow-lg transition">
-            <div className="w-[100%] h-40 bg-[url('https://images.unsplash.com/photo-1471922694854-ff1b63b20054?auto=format&fit=crop&w=400&q=80')] bg-cover relative rounded-t-md">
-              <div className="absolute inset-0 bg-black/30 flex flex-col justify-end p-5 rounded-t-md">
-                <p className="text-white font-bold text-lg text-left">
-                  Coastal Escape
+              
+              <div className="p-5 flex flex-col justify-between flex-grow space-y-4">
+                <p className="text-sm text-slate-300 font-medium leading-relaxed">
+                  {dest.tagline}
                 </p>
+                <Link to="/explore" className="mt-auto">
+                  <motion.button 
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full border border-white/20 bg-white hover:bg-transparent text-black hover:text-white font-bold py-2.5 px-4 rounded-xl text-sm transition-all duration-300 shadow-md"
+                  >
+                    Explore
+                  </motion.button>
+                </Link>
               </div>
-            </div>
-            <p className="text-md mt-2 ml-4 text-left font-medium">
-              Relax on beautiful beaches and coastal areas
-            </p>
-            <Link to="/explore" className="mt-auto mb-2 ml-4">
-              <button className="border-1 text-center p-2 bg-black text-white font-bold rounded-md w-32 hover:bg-gray-800 active:scale-95 transition">
-                Explore more
-              </button>
-            </Link>
-          </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </div>
