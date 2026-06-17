@@ -15,17 +15,18 @@ import api from "./api";
 
 function App() {
   const location = useLocation();
-  const [isAppLoading, setIsAppLoading] = useState(true);
+  const currentToken = localStorage.getItem("token");
+
+  const [isAppLoading, setIsAppLoading] = useState(!!currentToken);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
-
-  const currentToken = localStorage.getItem("token");
 
   useEffect(() => {
     const checkAuth = async () => {
       if (!currentToken) {
         setIsAuthenticated(false);
         setCheckingAuth(false);
+        setIsAppLoading(false);
         return;
       }
 
@@ -33,11 +34,13 @@ function App() {
       try {
         await api.get("/users/me");
         setIsAuthenticated(true);
+        setIsAppLoading(true);
       } catch (err) {
         console.error("Authentication check failed:", err);
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         setIsAuthenticated(false);
+        setIsAppLoading(false);
       } finally {
         setCheckingAuth(false);
       }
