@@ -47,7 +47,7 @@ function App() {
   }, [currentToken]);
 
   const hideNavbarRoutes = ["/signin", "/signup"];
-  const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname) && !checkingAuth;
+  const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname) && !checkingAuth && isAuthenticated;
   const isAuthRoute = hideNavbarRoutes.includes(location.pathname);
 
   // Helper to protect routes
@@ -66,7 +66,7 @@ function App() {
     <>
       <CursorTrail />
       <AnimatePresence mode="wait">
-        {isAppLoading && !isAuthRoute && (
+        {(isAppLoading || checkingAuth) && !isAuthRoute && (
           <InitialLoader onComplete={() => setIsAppLoading(false)} />
         )}
       </AnimatePresence>
