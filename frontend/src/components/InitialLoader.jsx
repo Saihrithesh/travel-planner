@@ -1,27 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-function InitialLoader({ onComplete }) {
+function InitialLoader({ onComplete, ready }) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const duration = 1500; // 1.5 seconds loading
-    const intervalTime = 15;
-    const step = 100 / (duration / intervalTime);
+    let timer;
 
-    const timer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(timer);
-          setTimeout(onComplete, 300); // Small delay after 100%
-          return 100;
-        }
-        return Math.min(prev + step, 100);
-      });
-    }, intervalTime);
+    if (!ready) {
+      // Simulate progress asymptotically towards 90% while waiting
+      timer = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 90) {
+            clearInterval(timer);
+            return 90;
+          }
+          const remaining = 90 - prev;
+          const step = Math.max(0.2, remaining * 0.05); // Slow down as we approach 90%
+          return Math.min(prev + step, 90);
+        });
+      }, 30);
+    } else {
+      // Once ready, quickly animate to 100%
+      timer = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(timer);
+            setTimeout(onComplete, 200); // Wait briefly at 100% before finishing
+            return 100;
+          }
+          // Increment faster to complete the loading sequence
+          const step = Math.max(4, (100 - prev) * 0.25);
+          return Math.min(prev + step, 100);
+        });
+      }, 16);
+    }
 
     return () => clearInterval(timer);
-  }, [onComplete]);
+  }, [ready, onComplete]);
 
   return (
     <motion.div

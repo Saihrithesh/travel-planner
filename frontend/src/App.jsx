@@ -70,7 +70,7 @@ function App() {
       <CursorTrail />
       <AnimatePresence mode="wait">
         {(isAppLoading || checkingAuth) && !isAuthRoute && (
-          <InitialLoader onComplete={() => setIsAppLoading(false)} />
+          <InitialLoader ready={!checkingAuth} onComplete={() => setIsAppLoading(false)} />
         )}
       </AnimatePresence>
       {shouldShowNavbar && <Navbar />}
