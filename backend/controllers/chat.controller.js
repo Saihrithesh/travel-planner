@@ -35,9 +35,9 @@ export const sendMessage = catchAsync(async (req, res, next) => {
     return next(new AppError('Please provide a messages array in the request body', 400));
   }
 
-  const apiKey = getManualApiKey() || process.env.OPENAI_API_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+  const apiKey = getManualApiKey() || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    return next(new AppError('API key is missing in server environment variables (set OPENAI_API_KEY, GEMINI_API_KEY, or GOOGLE_API_KEY)', 500));
+    return next(new AppError('API key is missing in server environment variables (set GEMINI_API_KEY, GOOGLE_API_KEY, or OPENAI_API_KEY)', 500));
   }
 
   const systemPromptContent = `You are Roamy, a helpful and polite travel assistant AI. Your job is to help travelers.
