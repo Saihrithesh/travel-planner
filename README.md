@@ -11,6 +11,7 @@ TripWise is a comprehensive full-stack travel planning application designed to s
 - **📅 AI Itinerary Generation**: Automatically generate detailed, day-by-day travel plans using OpenAI.
 - **📊 Travel Analytics**: Visualize your travel history and budget trends through a sleek statistics dashboard.
 - **✈️ Trip Management**: Create, view, and manage your upcoming and past journeys with ease.
+- **🤖 Roamy AI Chatbot**: Meet Roamy, your dedicated travel AI co-pilot. Chat with Roamy via the full dashboard or the global floating widget in the bottom-right corner. Roamy generates extremely concise summaries, itineraries, packing suggestions, and budget tables while filter-blocking non-travel questions.
 - **☁️ Real-time Weather**: Get localized weather insights for your destinations via the Open-Meteo API.
 
 ---
@@ -20,6 +21,7 @@ TripWise is a comprehensive full-stack travel planning application designed to s
 ### Frontend
 - **Framework**: React.js (Vite)
 - **Styling**: Tailwind CSS
+- **State & Animations**: Framer Motion (for chat slide-ins and toggles)
 - **Icons**: Lucide-React
 - **Charts**: Recharts
 - **HTTP Client**: Axios
@@ -28,6 +30,7 @@ TripWise is a comprehensive full-stack travel planning application designed to s
 - **Runtime**: Node.js
 - **Framework**: Express.js
 - **Database**: MongoDB (Mongoose)
+- **AI Integrations**: Gemini API
 - **Security**: JSON Web Tokens (JWT), Bcrypt, Helmet
 - **Validation**: Joi
 
@@ -51,8 +54,9 @@ Create a `.env` file in the `backend` folder:
 MONGODB_URL=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 JWT_EXPIRES_IN=90d
-OPENAI_API_KEY=your_openai_api_key
+OPENAI_API_KEY=your_openai_or_gemini_api_key
 ```
+*(Note: If your key starts with `sk-`, the backend automatically initiates the OpenAI client using `gpt-4o-mini`. If your key is a Google Gemini key starting with `AIzaSy` or `AQ.`, it will automatically route queries to the Google Gemini API with `gemini-2.5-flash`.)*
 
 ### 3. Frontend Setup
 ```bash
@@ -78,19 +82,7 @@ cd frontend
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173` (Frontend) and `http://localhost:3000` (Backend API).
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to open an issue or submit a pull request.
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License.
+The application will be available at `http://localhost:5173` (Frontend) and `http://localhost:5000` (Backend API).
 
 ---
 *Created with ❤️ by Saihrithesh*
