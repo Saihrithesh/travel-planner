@@ -3,6 +3,7 @@ import authRouter from './auth.routes.js';
 import userRouter from './user.routes.js';
 import tripRouter from './trip.routes.js';
 import destinationRouter from './destination.routes.js';
+import chatRouter from './chat.routes.js';
 import { getWeather, getAIItinerary } from '../controllers/destination.controller.js';
 import { signup, login } from '../controllers/auth.controller.js';
 import { protect } from '../middlewares/auth.middleware.js';
@@ -16,6 +17,7 @@ router.use('/auth', authRouter);
 router.use('/users', userRouter);
 router.use('/trips', tripRouter);
 router.use('/destinations', destinationRouter);
+router.use('/chat', chatRouter);
 
 // 2. Direct Routes
 router.get('/weather', protect, getWeather);

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { motion, useScroll } from "framer-motion";
-import { Compass, CalendarDays, PlusCircle, LogOut, BarChart3, Home } from "lucide-react";
+import { Compass, CalendarDays, PlusCircle, LogOut, BarChart3, Home, MessageSquare } from "lucide-react";
 
 function Navbar() {
   const { scrollYProgress } = useScroll();
@@ -22,6 +22,7 @@ function Navbar() {
     { to: "/plantrip", label: "Plan Trip", icon: PlusCircle },
     { to: "/explore", label: "Explore", icon: Compass },
     { to: "/stats", label: "Stats", icon: BarChart3 },
+    { to: "/chat", label: "Roamy", icon: MessageSquare },
   ];
 
   return (

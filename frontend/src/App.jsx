@@ -8,6 +8,8 @@ import PlanTrip from "./components/PlanTrip";
 import MyTrips from "./components/MyTrips";
 import StatsPage from "./components/StatsPage";
 import ExplorePage from "./components/ExplorePage";
+import ChatbotPage from "./components/ChatbotPage";
+import RoamyFloatingWidget from "./components/RoamyFloatingWidget";
 import Navbar from "./components/Navbar";
 import InitialLoader from "./components/InitialLoader";
 import CursorTrail from "./components/CursorTrail";
@@ -74,6 +76,7 @@ function App() {
         )}
       </AnimatePresence>
       {shouldShowNavbar && <Navbar />}
+      {shouldShowNavbar && <RoamyFloatingWidget />}
 
       <Routes>
         <Route 
@@ -138,6 +141,14 @@ function App() {
           element={
             <ProtectedRoute>
               <ExplorePage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/chat" 
+          element={
+            <ProtectedRoute>
+              <ChatbotPage />
             </ProtectedRoute>
           } 
         />

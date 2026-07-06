@@ -9,7 +9,7 @@ import AppError from './utils/appError.js';
 import globalErrorHandler from './middlewares/error.middleware.js';
 import routes from './routes/index.js';
 
-dotenv.config();
+dotenv.config({ override: true });
 const app = express();
 
 app.use(cors());
